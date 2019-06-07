@@ -31,6 +31,10 @@ rectification = rp.Rectification(mixture, 0.12, 0.4, 0.78)
 rectification.plot()
 ```
 
+This is the produced output—beautiful, right?
+
+![example plot](/img/example_plot.png)
+
 ## Available compounds
 At this state, you can create mixtures with the following compounds:
 
