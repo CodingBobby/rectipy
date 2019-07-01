@@ -157,8 +157,8 @@ class Mixture(object):
       fig, ax = plt.subplots(1, 1, figsize = (7, 7))
       ax.set_aspect('equal', 'box')
       ax.axis([0, 1, 0, 1])
-      ax.set_xlabel(r'$X_1$')
-      ax.set_ylabel(r'$X_2$')
+      ax.set_xlabel(r'$\widetilde{\mathbf{X}}\;\mathrm{in}\;\frac{\mathrm{mol}}{\mathrm{mol}}\;\longrightarrow$')
+      ax.set_ylabel(r'$\widetilde{\mathbf{Y}}\;\mathrm{in}\;\frac{\mathrm{mol}}{\mathrm{mol}}\;\longrightarrow$')
       ax.grid(True)
 
       ax.plot([0, 1], [0, 1], 'black', lw = 0.7)
@@ -176,12 +176,16 @@ class Mixture(object):
 class Rectification(object):
    # xA: mol concentration of comp 1 in Rest
    # xD: mol concentration of comp 1 in Product
-   def __init__(self, mixture, xA, xF, xD):
+   def __init__(self, mixture, xA, xD, opt):
       self.mix = mixture
       self.xA  = xA
-      self.xF  = xF
       self.xD  = xD
-   
+      self.xF = opt
+      # self.v = 0
+      
+      # if args[0] == True:
+      #    self.v = opt
+      #    self.xF = 0
 
    # xF: backfeed
    def min_operation(self):
@@ -252,6 +256,7 @@ class Rectification(object):
 
       mx, my, vmin = self.min_operation()
       ox, oy, vopt = self.opt_operation(vmin)
+      print('v_opt', vopt)
       sx, sy = self.sub_operation(vopt)
 
       rx, ry = self.opt_steps(sx[1], sy[1])
@@ -261,13 +266,15 @@ class Rectification(object):
       # optimum operation line part 1
       ax.plot([ox[0], sx[1]], [oy[0], sy[1]], 'blue', linestyle = '--', dashes = (6, 8), lw = 0.7)
       # optimum operation line part 2
-      ax.plot([sx[1], ox[1]], [sy[1], oy[1]], 'blue', lw = 0.7, label = 'Operation Line')
+      ax.plot([sx[1], ox[1]], [sy[1], oy[1]], 'blue', lw = 0.7, label = 'Verstärkung')
       # optimum sub operation line
-      ax.plot(sx, sy, 'green', lw = 0.7, label = 'Output Line')
+      ax.plot(sx, sy, 'green', lw = 0.7, label = 'Abtrieb')
 
       # rectification steps
-      ax.plot(rx, ry, 'red', lw = 0.7, label = 'Steps')
+      ax.plot(rx, ry, 'red', lw = 0.7, label = 'Stufen')
 
       ax.legend()
-      plt.show()
+      # plt.show()
+      filename = "mccabe_" + str(round(vopt, 2)).replace('.', '_') + ".png"
+      plt.savefig(filename, dpi=300, bbox_inches="tight")
       return 1
